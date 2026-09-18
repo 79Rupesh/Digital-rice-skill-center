@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Rice Skill Center | Skills Today, Success Tomorrow</title>
+    <!-- External CSS File Link -->
+    <link rel="stylesheet" href="sytle.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Simple modal/card styles matching the attached register UI */
+        .register-modal.hidden {
+            display: none;
+        }
+
+        .register-modal,
+        .payment-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+        }
+
+        .payment-popup.hidden {
+            display: none;
+        }
+
+        .register-card {
+            width: 640px;
+            max-width: 96%;
+            background: linear-gradient(180deg, #ffffff, #f7f7ff);
+            padding: 44px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .register-card.dark {
+            background: #0f0f12;
+            color: #fff
+        }
+
+        .register-close {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .register-title {
+            text-align: center;
+            margin: 6px 0 26px;
+            color: #2b2bff;
+            font-size: 2rem
+        }
+
+        .register-form input {
+            width: 100%;
+            padding: 18px 22px;
+            margin: 12px 0;
+            border-radius: 999px;
+            border: 1px solid #9aa3b5;
+            outline: none;
+            font-size: 1.12rem;
+            color: #111827;
+            background: #fff
+        }
+
+        .register-form input::placeholder {
+            color: #4b5563;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .register-form .fee-section {
+            margin: 20px 0;
+            font-size: 1.05rem
+        }
+
+        .register-form .fee-section.hidden {
+            display: none;
+        }
+
+        .register-form .form-message {
+            margin: 8px 0;
+            min-height: 20px
+        }
+
+        .fee-note {
+            color: #5e748f;
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+
+        .registration-flow {
+            display: grid;
+            gap: 10px;
+            margin: 18px 0;
+        }
+
+        .flow-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 12px 14px;
+            border: 1px solid #d7e1f4;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .flow-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            flex: 0 0 28px;
+            background: #0b3072;
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .flow-item h4 {
+            margin: 0;
+            color: #0b3072;
+            font-size: 1rem;
+        }
+
+        .flow-item p {
+            margin: 3px 0 0;
+            color: #5e748f;
+            font-size: 0.92rem;
+            line-height: 1.45;
+        }
+
+        .flow-item.active {
+            border-color: #f6a700;
+            background: #fff9eb;
+        }
+
+        .flow-item.done {
+            border-color: #1f7f34;
+            background: #f0fff4;
+        }
+
+        .status-panel {
+            display: none;
+            margin-top: 18px;
+            padding: 18px;
+            border-radius: 12px;
+            background: #eef4ff;
+            border: 1px solid #d7e1f4;
+        }
+
+        .status-panel.visible {
+            display: block;
+        }
+
+        .status-panel h3 {
+            color: #0b3072;
+            margin-bottom: 10px;
+        }
+
+        .status-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .status-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(11, 48, 114, 0.1);
+        }
+
+        .status-list li:last-child {
+            border-bottom: 0;
+        }
+
+        .status-value {
+            font-weight: 800;
+            color: #0b3072;
+            text-align: right;
+        }
+
+        .btn-accent {
+            background: linear-gradient(90deg, #7b2cff, #5a21ff);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: none
+        }
+
+        .btn-secondary {
+            background: #e6e6ff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none
+        }
+
+        .payment-card {
+            width: 420px;
+            max-width: 94%;
+            background: #ffffff;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+            position: relative;
+            text-align: center;
+        }
+
+        .payment-close {
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            border: 0;
+            background: transparent;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            color: #111827;
+        }
+
+        .payment-card h2 {
+            color: #0b3072;
+            margin: 8px 0;
+            font-size: 1.6rem;
+        }
+
+        .payment-card p {
+            color: #4b5563;
+            margin: 8px 0 16px;
+            line-height: 1.45;
+        }
+
+        .payment-qr-image {
+            width: 240px;
+            max-width: 100%;
+            border: 1px solid #d7e1f4;
+            border-radius: 10px;
+            padding: 10px;
+            background: #fff;
+            margin: 8px auto 16px;
+            display: block;
+        }
+
+        .payment-success {
+            display: none;
+            padding: 18px;
+            border-radius: 12px;
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #1f7f34;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .payment-card.success .payment-qr-content {
+            display: none;
+        }
+
+        .payment-card.success .payment-success {
+            display: block;
+        }
+
+        .payment-success-done.hidden {
+            display: none;
+        }
+
+        .payment-popup .form-message {
+            color: #0368ff;
+            min-height: 20px;
+        }
+
+        .payment-popup .form-message.error {
+            color: #c53030;
+        }
+
+        .payment-popup .form-message.success {
+            color: #1f7f34;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-circle">
+            <img src="image.png" alt="Digital Rice logo" class="splash-logo">
+        </div>
+        <p class="splash-text">DIGITAL RICE SKILL CENTER</p>
+        <div class="splash-progress" aria-hidden="true">
+            <span class="progress-count">0%</span>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <img src="image.png" alt="Digital Rice Skill Center logo" class="logo-img">
+
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#courses">Courses</a></li>
+                    <li><a href="#placement">Placement</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu"
+                    aria-expanded="false">
+                    ☰
+                </button>
+            </nav>
+            <a href="#" id="open-enroll-modal" class="btn-primary nav-btn">Enroll Now</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="badge"><i class="fa-solid fa-trophy"></i> 100% Placement Assistance Guaranteed</div>
+                <h2>Skills Today, <span class="highlight">Success Tomorrow</span></h2>
+                <p>30-Day Job-Ready Online Program
+                    Learn. Build Skills. Get Job-Ready.
+                    Transform your career with practical, industry-oriented training designed to help you develop the
+                    skills and confidence needed for today’s job market.</p>
+                <div class="hero-btns">
+                    <a href="#courses" class="btn-primary"><i class="fa-solid fa-rocket"></i> Explore Courses</a>
+                    <a href="#contact" class="btn-secondary"><i class="fa-solid fa-phone"></i> Contact Us</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fa-solid fa-user-check"></i>
+                        <div>
+                            <h4>100%</h4>
+                            <p>Placement Support</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <h4>30 Days</h4>
+                            <p>Live Training</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <div>
+                            <h4>Expert</h4>
+                            <p>Industry Trainers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offer Box -->
+            <div class="hero-card">
+                <div class="hero-card-note"><span>100% Placement Assistance Guaranteed</span></div>
+                <div class="offer-card">
+                    <span class="discount-badge">40% REFUND</span>
+                    <h3>Job Ready Program</h3>
+                    <p class="subtitle">30 Days Live Online Training</p>
+                    <ul class="offer-features">
+                        <li><i class="fa-solid fa-check-circle"></i> Offer Letter First, Fee Payment Later</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Live Practical Sessions</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Interview Preparation & Placement</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Get 40% Refund on 1st Month Salary</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </section>
+
+
+    <!-- WHY THIS PROGRAM SECTION -->
+
+    <section class="section program-highlights">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <span>WHY THIS PROGRAM</span>
+
+                <h2>
+                    A Structured Path from Learning to Career Readiness
+                </h2>
+
+                <p>
+                    Here’s what you’ll gain from our 30-day program.
+                </p>
+
+            </div>
+
+
+            <div class="program-features">
+
+                <div class="program-feature">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <h3>Live Interactive Classes</h3>
+                    <p>
+                        Learn through live, interactive sessions with practical guidance.
+                    </p>
+                </div>
+
+
+                <div class="program-feature">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <h3>Industry Expert Trainers</h3>
+                    <p>
+                        Learn from experienced trainers with practical, job-oriented guidance.
+                    </p>
+                </div>
+
+
+                <div class="program-feature">
+                    <i class="fa-solid fa-certificate"></i>
+                    <h3>E-Certificate Upon Completion</h3>
+                    <p>
+                        Receive an e-certificate upon successful completion of the program.
+                    </p>
+                </div>
+
+
+                <div class="program-feature">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <h3>100% Practical Approach</h3>
+                    <p>
+                        Gain hands-on experience through practical, skill-based training.
+                    </p>
+                </div>
+
+
+                <div class="program-feature">
+                    <i class="fa-solid fa-handshake"></i>
+                    <h3>100% Placement Support</h3>
+                    <p>
+                        Get dedicated placement assistance and career guidance.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Company Profile / About Section -->
+
+    <section id="about" class="section positioning-section">
+
+        <!-- Company Profile / About Section -->
+        <section id="about" class="section positioning-section">
+            <div class="container">
+                <div class="positioning-card">
+                    <div class="positioning-grid">
+                        <div class="positioning-copy">
+                            <span class="eyebrow">Company Profile</span>
+                            <h2>A Skill Development Hub for Career Growth</h2>
+                            <p>Digital Rice Skill Center is a career training ecosystem committed to making students and
+                                job
+                                seekers industry-ready through practical skills, confidence building, and placement
+                                support.
+                            </p>
+                            <p>We focus on affordable, job-oriented training that helps every learner move from
+                                preparation
+                                to opportunity with clarity, discipline, and support.</p>
+                            <div class="positioning-note">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                                <div>
+                                    <h3>Training & Standards</h3>
+                                    <p>Every program is built around practical learning, professional behaviour, and
+                                        student-first career outcomes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vision-mission-panel">
+                            <div class="glass-card">
+                                <div class="glass-icon"><i class="fa-solid fa-eye"></i></div>
+                                <h3>Our Vision</h3>
+                                <p>To empower every student with the right skills, confidence, and opportunities to
+                                    build a
+                                    successful career.</p>
+                            </div>
+                            <div class="glass-card">
+                                <div class="glass-icon"><i class="fa-solid fa-bullseye"></i></div>
+                                <h3>Our Mission</h3>
+                                <p>To provide affordable, quality, and industry-oriented training with 100% placement
+                                    assistance and accessible digital skills for all.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="values-strip">
+                        <div>
+                            <h3><i class="fa-solid fa-gem"></i> Core Values</h3>
+                            <ul class="value-list">
+                                <li><i class="fa-solid fa-star"></i> Integrity & Excellence</li>
+                                <li><i class="fa-solid fa-lightbulb"></i> Innovation & Discipline</li>
+                                <li><i class="fa-solid fa-graduation-cap"></i> Student Success</li>
+                                <li><i class="fa-solid fa-book-open"></i> Continuous Learning</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <!-- CEO Message Section -->
+        <section class="section ceo-section">
+            <div class="container">
+                <div class="ceo-grid">
+                    <div class="ceo-image">
+                        <img src="founder-photo.jpg" alt="CEO Photo of Digital Rice Skill Center">
+                    </div>
+                    <div class="ceo-card">
+                        <div class="ceo-quote-mark"><i class="fa-solid fa-quote-left"></i></div>
+                        <blockquote class="ceo-quote">
+                            "Empowering the youth with skills, confidence, and career opportunities. With 5+ years of
+                            experience in Soft Skills Training, Career Development, and Training & Placement, I have
+                            contributed to student development programs across 20+ Government Colleges."
+                        </blockquote>
+                        <div class="ceo-author">
+                            <h4>Training & Placement Officer
+                                Digital Rice Skill Center</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Training Programs / Courses -->
+        <section id="courses" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Our Training Programs</h2>
+                    <p>30-Day intensive skill development courses designed for job placement</p>
+                </div>
+                <div class="grid grid-3">
+                    <div class="course-card">
+                        <div class="course-icon"><i class="fa-solid fa-comments"></i></div>
+                        <h3>Spoken English & Soft Skills</h3>
+                        <p>Master communication, confidence building, body language, and professional etiquette.</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <h3>Interview Preparation</h3>
+                        <p>Mock interviews, resume building, LinkedIn profile setup, and HR round prep.</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <h3>Sales & Marketing Training</h3>
+                        <p>Learn lead generation, client counseling, sales process, and deal closing techniques.</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon"><i class="fa-solid fa-file-excel"></i></div>
+                        <h3>MS Excel & Computer Skills</h3>
+                        <p>Advanced Excel formulas, data management, reporting, and essential workplace tools.</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon"><i class="fa-solid fa-robot"></i></div>
+                        <h3>AI Tools Training</h3>
+                        <p>Leverage modern AI tools to boost productivity and workflow efficiency.</p>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                        <h3>Digital Marketing</h3>
+                        <p>Social media marketing, Google Business Profile, Facebook Ads, and content strategies.</p>
+                    </div>
+
+        </section>
+
+        <!-- Placement Process -->
+        <section id="placement" class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Our Placement Process</h2>
+                    <p>Step-by-step guidance from enrollment to job offer</p>
+                    <p>We have partnerships and tie-ups with 50+ companies. We have a network of more than 50 companies
+                        that
+                        helps provide employment opportunities to our students.</p>
+                </div>
+                <div class="process-steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <h4>Registration</h4>
+                        <p>Offer letter issuance & onboarding</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <h4>30 Days Training</h4>
+                        <p>Live practical online sessions</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <h4>Resume & LinkedIn</h4>
+                        <p>Professional profile creation</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <h4>Mock Interviews</h4>
+                        <p>Practice with industry experts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">5</div>
+                        <h4>Job Placement</h4>
+                        <p>100% interview arrangements & offer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer & Contact Section -->
+        <footer id="contact" class="footer">
+            <div class="container">
+                <div class="grid grid-3 footer-grid">
+                    <div class="footer-col">
+                        <div class="logo">
+                            <!-- <img src="image.png" alt="Digital Rice Skill Center logo" class="logo-img logo-img-footer"> -->
+                            <div class="logo-text">
+                                <h2 class="white">DIGITAL RICE</h2>
+                                <span>SKILL CENTER</span>
+                            </div>
+                        </div>
+                        <p class="footer-desc">Empowering skills, building futures. Industry-ready training with
+                            guaranteed
+                            100% placement assistance.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Quick Contact</h3>
+                        <ul class="contact-info">
+                            <li><i class="fa-solid fa-location-dot"></i> <a
+                                    href="https://www.google.com/maps/search/?api=1&query=130%2C%202nd%20Number%2C%20Nanda%20Nagar%2C%20Indore%2C%20MP%20-%20452011"
+                                    target="_blank" rel="noopener noreferrer"
+                                    aria-label="Open Digital Rice Skill Center address in Google Maps">130, 2nd Number,
+                                    Nanda Nagar, Indore, MP - 452011</a>
+                            </li>
+                            <li><i class="fa-solid fa-phone"></i> <a href="tel:+918103452976"
+                                    aria-label="Call Digital Rice Skill Center at 8103452976">8103452976</a></li>
+                            <li><i class="fa-solid fa-envelope"></i> info@digitalriceskillcenter.com</li>
+                            <li><i class="fa-solid fa-globe"></i> www.digitalriceskillcenter.com</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Enroll / Inquire Now</h3>
+                        <p>To enroll, click the button below and complete the registration form.</p>
+                        <a href="#" id="open-enroll-footer" class="btn-accent w-100">Enroll Now</a>
+                        <p id="form-message" class="form-message"></p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Digital Rice Skill Center. All Rights Reserved. | Serving Nationwide</p>
+                </div>
+            </div>
+        </footer>
+
+
+
+        <div id="ai-assistant" class="ai-assistant hidden">
+            <button id="ai-toggle" class="ai-button" aria-label="Open AI Assistant">
+                <img src="image.png" alt="Digital Rice AI" class="ai-toggle-logo" />
+            </button>
+            <div id="ai-chat" class="ai-chat">
+                <div class="ai-header">
+                    <span>AI Assistant</span>
+                    <button id="ai-close" class="ai-close" aria-label="Close assistant">×</button>
+                </div>
+                <div id="ai-messages" class="ai-messages">
+                    <div class="ai-message bot">Namaste! Main Digital Rice AI assistant hoon. Aap courses, fees,
+                        duration,
+                        placement process, refund offer, admission aur contact details ke baare mein pooch sakte hain.
+                    </div>
+                </div>
+                <div class="ai-input-wrap">
+                    <input id="ai-input" type="text"
+                        placeholder="Ask about this website, courses, fees or placement..." />
+                    <button id="ai-send" class="ai-send" aria-label="Send message"><i
+                            class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- Register Modal (centered card like design) -->
+        <div id="register-modal" class="register-modal hidden">
+
+            <div class="register-card">
+
+                <button id="register-close" class="register-close" aria-label="Close">
+                    ×
+                </button>
+
+                <h2 class="register-title">
+                    Register
+                </h2>
+
+                <form class="register-form">
+
+                    <!-- Full Name -->
+                    <input type="text" name="name" placeholder="Full Name" required>
+
+                    <!-- Email -->
+                    <input type="email" name="email" placeholder="E-mail" required>
+
+                    <!-- Phone -->
+                    <input type="tel" name="phone" placeholder="Phone" required>
+
+                    <!-- Education Qualification -->
+                    <div class="qualification-section">
+
+                        <label for="qualification">
+                            Education Qualification
+                        </label>
+
+                        <select id="qualification" name="qualification" required>
+                            <option value="">
+                                Select Qualification
+                            </option>
+
+                            <option value="10th">
+                                10th Pass
+                            </option>
+
+                            <option value="12th">
+                                12th Pass
+                            </option>
+
+                            <option value="ITI">
+                                ITI
+                            </option>
+
+                            <option value="Diploma">
+                                Diploma
+                            </option>
+
+                            <option value="Graduation">
+                                Graduation (UG)
+                            </option>
+
+                            <option value="Post Graduation">
+                                Post Graduation (PG)
+                            </option>
+                        </select>
+
+
+
+                    </div>
+
+
+                    <!-- Registration Payment -->
+                    <div class="fee-section" id="registration-payment-step">
+
+                        <p>
+                            <strong>
+                                Registration Fee: ₹300
+                            </strong>
+                        </p>
+
+                        <button type="button" id="modal-pay-fee" class="btn-secondary">
+                            Pay ₹300 Registration Fee
+                        </button>
+
+                        <p id="modal-payment-status" class="form-message"></p>
+
+                    </div>
+
+
+                    <!-- Form Message -->
+                    <p id="modal-form-message" class="form-message"></p>
+
+
+                    <!-- Continue -->
+                    <button type="submit" class="btn-accent w-100">
+                        Continue to Pay ₹300
+                    </button>
+
+                </form>
+
+
+                <!-- Payment Section -->
+                <div id="paymentSection" style="display: none;">
+
+                    <h2>
+                        Registration Fee: ₹300
+                    </h2>
+
+                    <p>
+                        Scan the QR Code and Pay ₹300
+                    </p>
+
+                    <img src="payment-qr.png" alt="UPI Payment QR Code" width="250">
+
+                    <p>
+                        After payment, click below
+                    </p>
+
+                    <button type="button">
+                        Payment Done
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div id="payment-popup" class="payment-popup hidden">
+            <div id="payment-card" class="payment-card">
+                <button id="payment-close" class="payment-close" type="button" aria-label="Close"></button>
+                <div class="payment-success">
+                    Registration successful. Payment received.
+                </div>
+                <div class="payment-qr-content">
+                    <h2>Registration Fee: Rs. 300</h2>
+                    <p>Scan this QR Code and pay Rs. 300. After payment, click the confirmation button.</p>
+                    <img src="payment-qr.png" alt="UPI Payment QR Code" class="payment-qr-image">
+                    <p id="popup-payment-status" class="form-message info">Waiting for payment confirmation.</p>
+                    <button type="button" id="popup-pay-done" class="btn-accent w-100">I Have Paid Rs. 300</button>
+                </div>
+                <button type="button" id="payment-success-done"
+                    class="btn-accent w-100 payment-success-done hidden">Done</button>
+            </div>
+        </div>
+
+        <script type="module" src="main.js"></script>
+</body>
+
+</html>
