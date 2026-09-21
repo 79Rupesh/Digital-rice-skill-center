@@ -12,9 +12,9 @@ import {
 
 const firebaseConfig = {
     apiKey: "AIzaSyD6otrGTDeW55SKZUrmk0BfDhh8c1I1lRc",
-    authDomain: "digital-rice-skill-center.firebaseapp.com",
-    projectId: "digital-rice-skill-center",
-    storageBucket: "digital-rice-skill-center.firebasestorage.app",
+    authDomain: "digital-rise-skill-center.firebaseapp.com",
+    projectId: "digital-rise-skill-center",
+    storageBucket: "digital-rise-skill-center.firebasestorage.app",
     messagingSenderId: "596472090939",
     appId: "1:596472090939:web:b170785263cef3c885e71e",
     measurementId: "G-P93FV9Q4FB"
@@ -1697,7 +1697,7 @@ Email: ${application.email}`
 
 
                 /* =================================
-                   UPDATE PAYMENT MESSAGE
+                UPDATE PAYMENT MESSAGE
                 ================================= */
 
                 if (modalFormMessage) {
@@ -1723,7 +1723,7 @@ Email: ${application.email}`
 
 
                 /* =================================
-                   UPDATE BUTTONS
+                UPDATE BUTTONS
                 ================================= */
 
                 if (modalPayBtn) {
@@ -1978,7 +1978,7 @@ Email: ${application.email}`
 
 
             /* =================================
-               CREATE APPLICATION RECORD
+            CREATE APPLICATION RECORD
             ================================= */
 
             const appData = {
